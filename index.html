@@ -260,6 +260,7 @@
       outline-offset: 4px;
       aspect-ratio: 16 / 9;
       overflow: hidden;
+      width: 100%;
     }
 
     /* CRT vignette */
@@ -274,11 +275,19 @@
 
     .monitor iframe,
     .monitor video,
-    .monitor .stream-placeholder {
-      width: 100%;
-      height: 100%;
+    .monitor .stream-placeholder,
+    #streamContainer,
+    #streamContainer iframe {
+      width: 100% !important;
+      height: 100% !important;
       border: none;
       display: block;
+      position: absolute;
+      inset: 0;
+    }
+
+    .monitor {
+      position: relative;
     }
 
     /* Offline placeholder */
@@ -784,6 +793,10 @@
       .main-grid {
         grid-template-columns: 1fr;
         padding: 1rem;
+      }
+
+      .monitor {
+        aspect-ratio: 4 / 3;
       }
 
       .sidebar {
