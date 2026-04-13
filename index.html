@@ -1240,25 +1240,78 @@
     return ptHour >= 8 && ptHour < 12;
   }
 
+  function isMobile() {
+    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
+  }
+
   function loadStream() {
     const container   = document.getElementById('streamContainer');
     const placeholder = document.getElementById('streamPlaceholder');
 
-    if (YOUTUBE_VIDEO_ID) {
-      container.innerHTML = `
-        <iframe
-          src="https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&mute=1&modestbranding=1&rel=0&playsinline=1&fs=1&iv_load_policy=3"
-          width="100%" height="100%" frameborder="0"
-          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-          allowfullscreen style="display:block;position:absolute;inset:0;width:100%;height:100%;">
-        </iframe>`;
-      placeholder.style.display = 'none';
-      container.style.display   = 'block';
-      track('stream_loaded', { video_id: YOUTUBE_VIDEO_ID });
-    } else {
+    if (!YOUTUBE_VIDEO_ID) {
       container.style.display   = 'none';
       placeholder.style.display = 'flex';
+      return;
     }
+
+    const watchUrl = `https://www.youtube.com/watch?v=${YOUTUBE_VIDEO_ID}`;
+    const thumbUrl = `https://img.youtube.com/vi/${YOUTUBE_VIDEO_ID}/maxresdefault.jpg`;
+
+    if (isMobile()) {
+      // Mobile: tap-to-open in YouTube app / full browser
+      container.style.display = 'block';
+      placeholder.style.display = 'none';
+      container.innerHTML = `
+        <a href="${watchUrl}" target="_blank" id="mobilePlayer"
+          style="display:block;width:100%;height:100%;position:relative;background:#000;text-decoration:none;">
+          <img src="${thumbUrl}"
+            onerror="this.src='https://img.youtube.com/vi/${YOUTUBE_VIDEO_ID}/hqdefault.jpg'"
+            style="width:100%;height:100%;object-fit:cover;display:block;opacity:0.85;" />
+          <div style="
+            position:absolute;inset:0;
+            display:flex;flex-direction:column;
+            align-items:center;justify-content:center;
+            gap:12px;">
+            <div style="
+              width:72px;height:72px;
+              background:rgba(255,0,0,0.9);
+              border-radius:50%;
+              display:flex;align-items:center;justify-content:center;
+              box-shadow:0 0 30px rgba(255,0,0,0.5);">
+              <div style="
+                width:0;height:0;
+                border-top:20px solid transparent;
+                border-bottom:20px solid transparent;
+                border-left:32px solid white;
+                margin-left:6px;">
+              </div>
+            </div>
+            <div style="
+              background:rgba(255,34,0,0.9);
+              color:#fff;
+              font-family:'Share Tech Mono',monospace;
+              font-size:0.7rem;
+              letter-spacing:3px;
+              padding:5px 14px;
+              display:flex;align-items:center;gap:6px;">
+              <span style="width:7px;height:7px;background:#fff;border-radius:50%;display:inline-block;animation:pulse-dot 1s ease-in-out infinite;"></span>
+              WATCH LIVE
+            </div>
+          </div>
+        </a>`;
+    } else {
+      // Desktop: full embed
+      container.style.display = 'block';
+      placeholder.style.display = 'none';
+      container.innerHTML = `
+        <iframe
+          src="https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&mute=1&modestbranding=1&rel=0&playsinline=1"
+          width="100%" height="100%" frameborder="0"
+          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          allowfullscreen style="display:block;width:100%;height:100%;">
+        </iframe>`;
+    }
+    track('stream_loaded', { video_id: YOUTUBE_VIDEO_ID, mobile: isMobile() });
   }
 
   loadStream();
