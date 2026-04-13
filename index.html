@@ -261,6 +261,7 @@
       aspect-ratio: 16 / 9;
       overflow: hidden;
       width: 100%;
+      position: relative;
     }
 
     /* CRT vignette */
@@ -275,19 +276,26 @@
 
     .monitor iframe,
     .monitor video,
-    .monitor .stream-placeholder,
-    #streamContainer,
-    #streamContainer iframe {
-      width: 100% !important;
-      height: 100% !important;
+    .monitor .stream-placeholder {
+      width: 100%;
+      height: 100%;
       border: none;
       display: block;
-      position: absolute;
-      inset: 0;
     }
 
-    .monitor {
-      position: relative;
+    #streamContainer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #streamContainer iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
     }
 
     /* Offline placeholder */
@@ -796,7 +804,9 @@
       }
 
       .monitor {
-        aspect-ratio: 4 / 3;
+        aspect-ratio: unset;
+        height: 56vw;
+        min-height: 240px;
       }
 
       .sidebar {
@@ -1241,10 +1251,10 @@
     if (YOUTUBE_VIDEO_ID) {
       container.innerHTML = `
         <iframe
-          src="https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&mute=1&modestbranding=1&rel=0"
+          src="https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&mute=1&modestbranding=1&rel=0&playsinline=1&fs=1&iv_load_policy=3"
           width="100%" height="100%" frameborder="0"
-          allow="autoplay; encrypted-media; picture-in-picture"
-          allowfullscreen style="display:block;">
+          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          allowfullscreen style="display:block;position:absolute;inset:0;width:100%;height:100%;">
         </iframe>`;
       placeholder.style.display = 'none';
       container.style.display   = 'block';
