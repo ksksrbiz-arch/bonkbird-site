@@ -258,9 +258,9 @@
       border: 2px solid var(--border);
       outline: 6px solid #1c1c1c;
       outline-offset: 4px;
-      aspect-ratio: 16 / 9;
       overflow: hidden;
       width: 100%;
+      height: 420px;
       position: relative;
     }
 
@@ -284,18 +284,16 @@
     }
 
     #streamContainer {
-      position: absolute;
-      inset: 0;
       width: 100%;
       height: 100%;
+      display: block;
     }
 
     #streamContainer iframe {
-      position: absolute;
-      inset: 0;
       width: 100%;
       height: 100%;
       border: none;
+      display: block;
     }
 
     /* Offline placeholder */
@@ -804,9 +802,7 @@
       }
 
       .monitor {
-        aspect-ratio: unset;
-        height: 56vw;
-        min-height: 240px;
+        height: 260px;
       }
 
       .sidebar {
