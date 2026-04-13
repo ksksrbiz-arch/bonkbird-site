@@ -868,29 +868,18 @@
     <!-- MONITOR / STREAM -->
     <div class="monitor" id="monitor">
       <!--
-        ════════════════════════════════════════════
-        STREAM EMBED — SWAP THIS SECTION WHEN LIVE
-        ════════════════════════════════════════════
-
-        OPTION A — YouTube Live:
-        <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&mute=1"
-          width="100%" height="100%" frameborder="0"
-          allow="autoplay; encrypted-media" allowfullscreen></iframe>
-
-        OPTION B — Twitch:
-        <iframe src="https://player.twitch.tv/?channel=bonkbird&parent=bonkbird.live&parent=bonkbird.netlify.app&muted=true"
-          height="100%" width="100%" allowfullscreen frameborder="0"></iframe>
-
-        OPTION C — Owncast (recommended, self-hosted):
-        <iframe src="https://your-oracle-server.com/embed/video"
-          width="100%" height="100%" frameborder="0"
-          allow="autoplay" allowfullscreen></iframe>
-        ════════════════════════════════════════════
+        ════════════════════════════════════════
+        TO GO LIVE: replace YOUTUBE_VIDEO_ID
+        with the video ID from YouTube Studio.
+        Example: https://youtu.be/dQw4w9WgXcQ
+        → video ID is: dQw4w9WgXcQ
+        ════════════════════════════════════════
       -->
+      <div id="streamContainer" style="width:100%;height:100%;"></div>
       <div class="stream-placeholder" id="streamPlaceholder">
         <div class="static" id="staticGlyph">░▒▓█</div>
-        <div class="offline-msg">STREAM INITIALIZING<br/>BIRD STANDING BY</div>
-        <div class="offline-sub">EST. LIVE: COMING SOON</div>
+        <div class="offline-msg">STREAM OFFLINE<br/>BIRD STANDING BY</div>
+        <div class="offline-sub">LIVE DAILY 8AM – NOON PT</div>
       </div>
 
       <!-- Corner HUD overlays -->
@@ -1218,7 +1207,46 @@
   const dayDiff = Math.floor((new Date() - streamStart) / (1000*60*60*24));
   document.getElementById('dayCount').textContent = Math.max(8, dayDiff);
 
-  // ── AMPLITUDE HELPER ──────────────────────────────
+  // ── YOUTUBE STREAM ────────────────────────────────
+  // Paste your YouTube Live video ID here each morning
+  // Get it from YouTube Studio → Go Live → copy from URL
+  const YOUTUBE_VIDEO_ID = ''; // e.g. 'dQw4w9WgXcQ'
+
+  // Live window: 8 AM – noon Pacific time daily
+  function isLiveHours() {
+    const now = new Date();
+    // Convert to PT (UTC-7 PDT / UTC-8 PST)
+    const ptOffset = now.toLocaleString('en-US', {timeZone: 'America/Los_Angeles', hour: 'numeric', hour12: false});
+    const ptHour = parseInt(ptOffset);
+    return ptHour >= 8 && ptHour < 12;
+  }
+
+  function loadStream() {
+    const container   = document.getElementById('streamContainer');
+    const placeholder = document.getElementById('streamPlaceholder');
+
+    if (YOUTUBE_VIDEO_ID && isLiveHours()) {
+      container.innerHTML = `
+        <iframe
+          src="https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&mute=1&modestbranding=1&rel=0"
+          width="100%" height="100%" frameborder="0"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen style="display:block;">
+        </iframe>`;
+      placeholder.style.display = 'none';
+      container.style.display   = 'block';
+      track('stream_loaded', { video_id: YOUTUBE_VIDEO_ID });
+    } else {
+      container.style.display   = 'none';
+      placeholder.style.display = 'flex';
+    }
+  }
+
+  loadStream();
+  // Re-check every 5 minutes in case stream goes live while page is open
+  setInterval(loadStream, 5 * 60 * 1000);
+
+
   function track(event, props = {}) {
     try {
       if (window._amplitude) window._amplitude.track(event, props);
