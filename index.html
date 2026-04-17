@@ -1214,7 +1214,7 @@
   //   • Bird cycles between active periods (2–5 min) and rest periods (1–3 min)
   //   • During active periods it bonks every 10–45 s, with occasional rapid bursts
   let autoDetectEnabled = localStorage.getItem('autoDetect') === 'true';
-  let _autoTimer        = null;
+  let _autoTimers       = [];     // all active timer IDs
   let _activePhase      = true;   // alternates between active & rest
   let _phaseEnd         = 0;      // timestamp when current phase ends
 
@@ -1223,6 +1223,17 @@
 
   function _randomBetween(lo, hi) {
     return lo + Math.random() * (hi - lo);
+  }
+
+  function _addTimer(fn, delay) {
+    const id = setTimeout(fn, delay);
+    _autoTimers.push(id);
+    return id;
+  }
+
+  function _clearAllTimers() {
+    _autoTimers.forEach(clearTimeout);
+    _autoTimers = [];
   }
 
   function _startPhase() {
@@ -1234,7 +1245,8 @@
     } else {
       // Resting: 1–3 minutes — just wait, then switch back
       const restDuration = _randomBetween(1, 3) * 60 * 1000;
-      _autoTimer = setTimeout(() => {
+      _addTimer(() => {
+        if (!autoDetectEnabled) return;
         _activePhase = true;
         _startPhase();
       }, restDuration);
@@ -1260,17 +1272,17 @@
       let delay = 0;
       for (let i = 0; i < burstCount; i++) {
         const burstDelay = delay;
-        _autoTimer = setTimeout(() => {
+        _addTimer(() => {
           if (autoDetectEnabled) registerBonk();
         }, burstDelay);
         delay += _randomBetween(3, 8) * 1000;
       }
       // Schedule next regular bonk after burst
-      _autoTimer = setTimeout(_scheduleNextBonk, delay + _randomBetween(10, 35) * 1000);
+      _addTimer(_scheduleNextBonk, delay + _randomBetween(10, 35) * 1000);
     } else {
       // Normal single bonk
       const nextIn = _randomBetween(10, 45) * 1000;
-      _autoTimer = setTimeout(() => {
+      _addTimer(() => {
         if (autoDetectEnabled) {
           registerBonk();
           _scheduleNextBonk();
@@ -1283,14 +1295,14 @@
   }
 
   function _stopAutoDetect() {
-    clearTimeout(_autoTimer);
-    _autoTimer = null;
+    _clearAllTimers();
     _autoDetectStatus.textContent = 'AUTO-DETECT OFF';
     _autoDetectStatus.classList.remove('detecting');
     _autoDetectBtn.classList.remove('active');
   }
 
   function _startAutoDetect() {
+    _clearAllTimers();
     _activePhase = true;
     _autoDetectBtn.classList.add('active');
     _startPhase();
@@ -1310,7 +1322,6 @@
 
   // Restore auto-detect state on page load
   if (autoDetectEnabled) {
-    _autoDetectBtn.classList.add('active');
     _startAutoDetect();
   }
 
