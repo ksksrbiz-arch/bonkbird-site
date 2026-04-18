@@ -35,4 +35,4 @@ Find the `<!-- STREAM EMBED -->` comment block in `index.html` and replace the p
 
 ## Part of
 
-[TH3 SIGNAL](https://th3signal.netlify.app) — the 1Commerce solo founder build log.
+[TH3 SIGNAL](https://signal01.netlify.app) — the 1Commerce solo founder build log.
