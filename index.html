@@ -126,6 +126,14 @@
       letter-spacing: 3px;
       padding: 3px 10px;
       text-transform: uppercase;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .live-badge.off-air {
+      background: transparent;
+      color: var(--grey);
+      border: 1px solid var(--grey);
+      padding: 2px 9px;
     }
 
     .live-dot {
@@ -133,6 +141,11 @@
       background: #fff;
       border-radius: 50%;
       animation: pulse-dot 1s ease-in-out infinite;
+    }
+
+    .live-badge.off-air .live-dot {
+      background: var(--grey);
+      animation: none;
     }
 
     @keyframes pulse-dot {
@@ -354,7 +367,9 @@
       background: rgba(0,0,0,0.7);
     }
 
-    .corner-tl { top: 10px; left: 10px; color: var(--red); border-left: 2px solid var(--red); }
+    .corner-tl { top: 10px; left: 10px; color: var(--red); border-left: 2px solid var(--red); transition: color 0.3s, border-color 0.3s; }
+    .corner-tl.off-air { color: var(--grey); border-left-color: var(--grey); }
+    .corner-tl.off-air .dot { background: var(--grey); animation: none; }
     .corner-tr { top: 10px; right: 10px; color: var(--green); text-align: right; border-right: 2px solid var(--green); }
     .corner-bl { bottom: 10px; left: 10px; color: var(--grey); border-left: 2px solid var(--grey); }
     .corner-br { bottom: 10px; right: 10px; color: var(--yellow); text-align: right; border-right: 2px solid var(--yellow); }
@@ -674,11 +689,33 @@
       margin: 0 auto;
       padding: 0 2rem 4rem;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 1.5rem;
       border-top: 1px solid var(--border);
       padding-top: 2rem;
       margin-top: 0;
+    }
+
+    .timeline-list {
+      list-style: none;
+      font-size: 0.72rem;
+      color: var(--grey);
+      letter-spacing: 1px;
+      line-height: 1.6;
+    }
+    .timeline-list li {
+      display: flex;
+      gap: 0.6rem;
+      padding: 0.35rem 0;
+      border-bottom: 1px dashed var(--border);
+    }
+    .timeline-list li:last-child { border-bottom: none; }
+    .timeline-list .day {
+      color: var(--yellow);
+      font-family: 'VT323', monospace;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+      min-width: 46px;
     }
 
     .about-card {
@@ -737,6 +774,51 @@
       transition: opacity 0.25s ease-out;
     }
 
+
+    /* ── INCIDENT LOG ── */
+    .incident-log {
+      list-style: none;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 1px;
+      line-height: 1.5;
+      color: var(--white);
+      max-height: 180px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .incident-log::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 36px;
+      background: linear-gradient(to bottom, transparent, var(--bg2));
+      pointer-events: none;
+    }
+
+    .incident-log li {
+      display: flex;
+      gap: 0.55rem;
+      padding: 3px 0;
+      border-bottom: 1px dashed var(--border);
+      animation: log-in 0.25s ease-out;
+    }
+    .incident-log li:last-child { border-bottom: none; }
+
+    .incident-time {
+      color: var(--green);
+      flex-shrink: 0;
+    }
+
+    .incident-msg { color: var(--white); }
+    .incident-msg.alert { color: var(--red); }
+    .incident-msg.warn  { color: var(--yellow); }
+
+    @keyframes log-in {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
     /* ── DR. PIGEON ANALYST ── */
     .analyst-panel {
@@ -851,6 +933,10 @@
     }
 
     /* ── RESPONSIVE ── */
+    @media (max-width: 1180px) {
+      .about-section { grid-template-columns: repeat(2, 1fr); }
+    }
+
     @media (max-width: 960px) {
       .main-grid {
         grid-template-columns: 1fr;
@@ -894,9 +980,9 @@
 <header>
   <div class="header-left">
     <a href="#" class="wordmark">BONK<span>BIRD</span></a>
-    <div class="live-badge">
+    <div class="live-badge" id="liveBadge">
       <div class="live-dot"></div>
-      LIVE
+      <span id="liveBadgeText">LIVE</span>
     </div>
   </div>
   <div class="header-right">
@@ -909,23 +995,7 @@
 <!-- ── TICKER ── -->
 <div class="ticker-wrap">
   <div class="ticker-label">⚡ BREAKING</div>
-  <div class="ticker-track" id="tickerTrack">
-    <span>BIRD RETURNS FOR DAY 8 OF WINDOW CONFLICT ///</span>
-    <span>ORNITHOLOGISTS BAFFLED, DEEPLY CONCERNED ///</span>
-    <span>TOTAL BONK COUNT EXCEEDS 1,000 THIS WEEK ///</span>
-    <span>WINDOW STILL INTACT AS OF PRESS TIME ///</span>
-    <span>BIRD SHOWS NO SIGNS OF BACKING DOWN ///</span>
-    <span>EXPERTS: "WE HAVE NO EXPLANATION" ///</span>
-    <span>UPDATE: BIRD SPOTTED PLOTTING ITS NEXT APPROACH ///</span>
-    <!-- duplicate for infinite scroll -->
-    <span>BIRD RETURNS FOR DAY 8 OF WINDOW CONFLICT ///</span>
-    <span>ORNITHOLOGISTS BAFFLED, DEEPLY CONCERNED ///</span>
-    <span>TOTAL BONK COUNT EXCEEDS 1,000 THIS WEEK ///</span>
-    <span>WINDOW STILL INTACT AS OF PRESS TIME ///</span>
-    <span>BIRD SHOWS NO SIGNS OF BACKING DOWN ///</span>
-    <span>EXPERTS: "WE HAVE NO EXPLANATION" ///</span>
-    <span>UPDATE: BIRD SPOTTED PLOTTING ITS NEXT APPROACH ///</span>
-  </div>
+  <div class="ticker-track" id="tickerTrack"></div>
 </div>
 
 <!-- ── MAIN ── -->
@@ -959,10 +1029,10 @@
 
       <!-- Corner HUD overlays -->
       <div class="monitor-overlay">
-        <div class="corner-label corner-tl">
+        <div class="corner-label corner-tl" id="recOverlay">
           <div class="live-overlay">
-            <div class="dot"></div>
-            REC · CH.04
+            <div class="dot" id="recDot"></div>
+            <span id="recText">REC · CH.04</span>
           </div>
         </div>
         <div class="corner-label corner-tr" id="clockDisplay">00:00:00</div>
@@ -1050,6 +1120,17 @@
             <span class="status-val green">1,000+</span>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- INCIDENT LOG -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">INCIDENT LOG</span>
+        <span style="font-size:0.62rem;color:var(--green);letter-spacing:2px;" class="blink">LIVE</span>
+      </div>
+      <div class="panel-body">
+        <ul class="incident-log" id="incidentLog"></ul>
       </div>
     </div>
 
@@ -1151,8 +1232,21 @@
     <p>
       <strong>Is the bird okay?</strong> Medically, probably. Mentally, unclear.<br/><br/>
       <strong>Will the bird stop?</strong> Eight days of evidence suggests no.<br/><br/>
-      <strong>Why?</strong> Birds sometimes attack their own reflection. Or this one just hates glass.
+      <strong>Why?</strong> Birds sometimes attack their own reflection. Or this one just hates glass.<br/><br/>
+      <strong>Can I contribute?</strong> Click BONK every time you see a hit — you're crowd-sourcing the count.
     </p>
+  </div>
+  <div class="about-card">
+    <div class="about-card-title">TIMELINE</div>
+    <ul class="timeline-list">
+      <li><span class="day">D1</span><span>Bird first spotted at window. Assumed to be a fluke.</span></li>
+      <li><span class="day">D2</span><span>Bird returns. Begins pattern of repeated impacts.</span></li>
+      <li><span class="day">D3</span><span>First viral TikTok posted. Neighbors concerned.</span></li>
+      <li><span class="day">D5</span><span>24/7 livestream goes online. Internet pays attention.</span></li>
+      <li><span class="day">D7</span><span>Ornithologists contacted. No one has answers.</span></li>
+      <li><span class="day">D8</span><span>Bonk count passes 1,000. Window still intact.</span></li>
+      <li><span class="day">NOW</span><span id="timelineNow">Conflict ongoing. Bird undefeated in spirit.</span></li>
+    </ul>
   </div>
 </div>
 
@@ -1206,6 +1300,9 @@
     }
 
     randomizeBirdStatus();
+    if (typeof addIncident === 'function') {
+      addIncident({ msg: `BONK CONFIRMED — TOTAL ${bonkCount.toLocaleString()}`, tone: 'alert' });
+    }
     if (navigator.vibrate) navigator.vibrate(40);
   }
 
@@ -1407,6 +1504,129 @@
 
   // ── YOUTUBE STREAM ────────────────────────────────
   const YOUTUBE_VIDEO_ID = 'p2tPWfLehaM'; // live stream ID — update each session
+
+  // ── LIVE / OFF-AIR BADGE ──────────────────────────
+  function updateLiveBadge() {
+    const badge     = document.getElementById('liveBadge');
+    const badgeText = document.getElementById('liveBadgeText');
+    const recEl     = document.getElementById('recOverlay');
+    const recText   = document.getElementById('recText');
+    if (!badge || !recEl) return;
+
+    const onAir = isStreamLive() && isLiveHours();
+    badge.classList.toggle('off-air', !onAir);
+    recEl.classList.toggle('off-air', !onAir);
+    badgeText.textContent = onAir ? 'LIVE' : 'OFF AIR';
+    recText.textContent   = onAir ? 'REC · CH.04' : 'STANDBY · CH.04';
+  }
+  updateLiveBadge();
+  setInterval(updateLiveBadge, 30 * 1000);
+
+  // ── TICKER HEADLINES ──────────────────────────────
+  const tickerPool = [
+    () => `BIRD RETURNS FOR DAY ${currentDay()} OF WINDOW CONFLICT`,
+    () => `BONK COUNT AT ${bonkCount.toLocaleString()} AND CLIMBING`,
+    () => `${viewers} CURRENTLY WATCHING BIRD HIT WINDOW`,
+    () => 'ORNITHOLOGISTS BAFFLED, DEEPLY CONCERNED',
+    () => 'WINDOW STILL INTACT AS OF PRESS TIME',
+    () => 'BIRD SHOWS NO SIGNS OF BACKING DOWN',
+    () => 'EXPERTS: "WE HAVE NO EXPLANATION"',
+    () => 'UPDATE: BIRD SPOTTED PLOTTING NEXT APPROACH',
+    () => 'LOCAL GLAZIER REPORTS UNUSUAL INTEREST IN WINDOWS',
+    () => 'DR. PIGEON: "THE TRAJECTORY IS HISTORIC"',
+    () => 'BIRD DENIES ALL REQUESTS FOR COMMENT',
+    () => 'WINDOW RATED "STRUCTURALLY CONFIDENT"',
+    () => 'CANBY POLICE: NOT A MATTER FOR LAW ENFORCEMENT',
+    () => 'FOOTAGE UNDER REVIEW BY NATIONAL BIRD COUNCIL',
+    () => 'VIEWERS DEMAND SUBTITLES FOR BIRD THOUGHTS',
+    () => 'REFLECTION THEORY GAINS TRACTION AMONG SCIENTISTS',
+    () => 'BIRD BRIEFLY ATTEMPTS SIDE WINDOW, RETURNS TO ORIGINAL',
+    () => 'HOMEOWNER CONSIDERS CURTAINS, REJECTS IDEA',
+    () => 'INSURANCE STATUS: UNCHANGED',
+    () => 'BIRD TAKES 4-MINUTE BREAK. WE DOCUMENTED IT.',
+    () => `DAY ${currentDay()}: BIRD STILL AT IT, FRANKLY IMPRESSIVE`,
+    () => 'STREAM DECLARED "OFFICIALLY UNMISSABLE"',
+    () => 'WINDOW WINS AGAIN. NOBODY SURPRISED.',
+    () => 'NEW VIEWERS ARRIVING, UNDERSTANDING NOTHING',
+    () => 'BIRD CONFIRMED TO BE SAME BIRD AS YESTERDAY'
+  ];
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function currentDay() {
+    return Math.max(8, Math.floor((new Date() - streamStart) / (1000*60*60*24)));
+  }
+
+  function renderTicker() {
+    const track = document.getElementById('tickerTrack');
+    if (!track) return;
+    const picked = shuffle(tickerPool).slice(0, 8).map(fn => fn());
+    const items = picked.concat(picked); // duplicate for seamless scroll
+    track.innerHTML = items.map(t => `<span>${t} ///</span>`).join('');
+  }
+  renderTicker();
+  // Refresh pool every 2 minutes so dynamic lines stay current
+  setInterval(renderTicker, 2 * 60 * 1000);
+
+  // ── INCIDENT LOG ──────────────────────────────────
+  const incidentTemplates = [
+    { msg: 'BIRD APPROACHING WINDOW',        tone: 'warn' },
+    { msg: 'IMPACT REGISTERED [THUD-04]',    tone: 'alert' },
+    { msg: 'BIRD PERCHED ON SILL, STARING',  tone: '' },
+    { msg: 'BIRD BRIEFLY EXITED FRAME',      tone: '' },
+    { msg: 'SECONDARY IMPACT [THUD-07]',     tone: 'alert' },
+    { msg: 'BIRD CIRCLING AT 3M ALTITUDE',   tone: 'warn' },
+    { msg: 'WINDOW HOLDING. NO DAMAGE.',     tone: '' },
+    { msg: 'BIRD MADE EYE CONTACT WITH CAM', tone: 'warn' },
+    { msg: 'BIRD APPEARS CONFUSED',          tone: '' },
+    { msg: 'RAPID BURST DETECTED [x3]',      tone: 'alert' },
+    { msg: 'BIRD PAUSED TO PREEN',           tone: '' },
+    { msg: 'REFLECTION REACQUIRED',          tone: 'warn' },
+    { msg: 'BIRD CHIRPED ONCE, MENACINGLY',  tone: 'warn' },
+    { msg: 'NO ACTIVITY — 90s INTERVAL',     tone: '' },
+    { msg: 'BIRD RETURNS FROM SHORT BREAK',  tone: 'warn' },
+    { msg: 'AUDIO SPIKE DETECTED',           tone: 'alert' }
+  ];
+
+  function logTimestamp() {
+    const now = new Date();
+    return [now.getHours(), now.getMinutes(), now.getSeconds()]
+      .map(n => String(n).padStart(2, '0')).join(':');
+  }
+
+  function addIncident(entry) {
+    const log = document.getElementById('incidentLog');
+    if (!log) return;
+    const li = document.createElement('li');
+    const tone = entry.tone ? ` ${entry.tone}` : '';
+    li.innerHTML = `<span class="incident-time">${logTimestamp()}</span>` +
+                   `<span class="incident-msg${tone}">${entry.msg}</span>`;
+    log.prepend(li);
+    // Keep the log short
+    while (log.children.length > 6) log.removeChild(log.lastChild);
+  }
+
+  function seedIncidentLog() {
+    const seeds = shuffle(incidentTemplates).slice(0, 4);
+    seeds.forEach(addIncident);
+  }
+
+  function tickIncident() {
+    const pick = incidentTemplates[Math.floor(Math.random() * incidentTemplates.length)];
+    addIncident(pick);
+  }
+
+  seedIncidentLog();
+  setInterval(tickIncident, 7000 + Math.random() * 4000);
+
+
 
   // ── OFFLINE PLAYLIST ──────────────────────────────
   const OFFLINE_VIDEOS = [
